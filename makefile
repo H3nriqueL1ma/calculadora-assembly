@@ -1,4 +1,4 @@
-NAME = calculator
+NAME = program
 
 all: $(NAME).o
 	ld -s -o $(NAME) $(NAME).o

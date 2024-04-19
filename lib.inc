@@ -1,42 +1,67 @@
-segment .data
-    LF          equ 0xA     ; Quebra de linha
-    NULL        equ 0xD     ; Final da String
-    TAB         equ 0x9     ; Identação
-    SYS_CALL    equ 0x80    ; Envio da informação ao SO
-
-    ; EAX
-    SYS_EXIT    equ 0x1     ; Código de chamada de finalização
-    SYS_READ    equ 0x3     ; Read
-    SYS_WRITE   equ 0x4     ; Write
-
-    ; EBX
-    RET_EXIT    equ 0x0     ; Operação finalizada
-    STD_IN      equ 0x0     ; Entrada padrão
-    STD_OUT     equ 0x1     ; Saída padrão
-
-    BUFFER_SIZE equ 0xA
-
 segment .text
 
-showExit:
-    CALL        strSize
-    MOV         EAX, SYS_WRITE
-    MOV         EBX, STD_OUT
-    INT         SYS_CALL
-    RET
+show_OUT:
+    mov         eax, 4
+    mov         ebx, 1
+    INT         0x80
+    ret
 
+_exit:
+    mov         eax, 1
+    INT         0x80
 
+show_result:
+    mov         ecx, result
+    mov         edx, 25
+    call        show_OUT
 
+    mov         ecx, res_opr
+    mov         edx, 2
+    call        show_OUT
 
-strSize:
-    MOV         EDX, ECX
+    mov         ecx, line_c
+    mov         edx, 31
+    call        show_OUT
+    jmp         _exit
 
-nextChar:
-    CMP         BYTE[EDX], NULL
-    JZ          finish
-    INC         EDX
-    JMP         nextChar
+error_opt:
+    mov         byte [n1], 0
+    mov         byte [n2], 0
+    mov         byte [opt_n], 0
 
-finish:
-    SUB         EDX, ECX
-    RET         
+    mov         ecx, err_opt
+    mov         edx, 18
+    call        show_OUT
+
+    mov         ecx, line_c
+    mov         edx, 31
+    call        show_OUT
+    jmp         _exit
+
+error_input:
+    mov         byte [n1], 0
+    mov         byte [n2], 0
+    mov         byte [opt_n], 0
+
+    mov         ecx, line
+    mov         edx, 31
+    call        show_OUT
+
+    mov         ecx, err_input
+    mov         edx, 20
+    call        show_OUT
+    jmp         _exit
+
+error_sub:
+    mov         byte [n1], 0
+    mov         byte [n2], 0
+    mov         byte [opt_n], 0
+
+    mov         ecx, err_sub
+    mov         edx, 33
+    call        show_OUT
+
+    mov         ecx, line_c
+    mov         edx, 31
+    call        show_OUT
+    jmp         _exit
